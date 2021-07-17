@@ -22,38 +22,77 @@ namespace Analyzer1.Test
         [TestMethod]
         public async Task TestMethod2()
         {
-            var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
+            var test =
+@"using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
-    namespace ConsoleApplication1
+namespace ConsoleApplication1
+{
+    public class MyDTO
     {
-        class {|#0:TypeName|}
-        {   
-        }
-    }";
+        public string Name;
+    }
 
-            var fixtest = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
+    public class MyModel
     {
-        class TYPENAME
-        {   
-        }
-    }";
+        public string Name;
+    }
 
-            var expected = VerifyCS.Diagnostic("Analyzer1").WithLocation(0).WithArguments("TypeName");
+    public static class Mapper
+    {
+        public static MyModel Map(MyDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static MyModel Poep(MyDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var fixtest =
+@"using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public class MyDTO
+    {
+        public string Name;
+    }
+
+    public class MyModel
+    {
+        public string Name;
+    }
+
+    public static class Mapper
+    {
+        public static MyModel Map(MyDTO dto)
+        {
+            // Found
+            return new MyModel();
+        }
+        public static MyModel Poep(MyDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var expected = VerifyCS.Diagnostic("Analyzer1").WithSpan(22, 31, 22, 34).WithArguments("Map");
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }
+
     }
 }

@@ -68,5 +68,14 @@ namespace Analyzer1 {
                 return ResourceManager.GetString("CodeFixTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automap children.
+        /// </summary>
+        internal static string CodeFixTitle2 {
+            get {
+                return ResourceManager.GetString("CodeFixTitle2", resourceCulture);
+            }
+        }
     }
 }

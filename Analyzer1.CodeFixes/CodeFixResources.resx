@@ -121,4 +121,7 @@
     <value>Make uppercase</value>
     <comment>The title of the code fix.</comment>
   </data>
+  <data name="CodeFixTitle2" xml:space="preserve">
+    <value>Automap children</value>
+  </data>
 </root>
