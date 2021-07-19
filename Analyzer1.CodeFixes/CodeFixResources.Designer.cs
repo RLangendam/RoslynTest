@@ -61,7 +61,7 @@ namespace Analyzer1 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Make uppercase.
+        ///   Looks up a localized string similar to Automapper.
         /// </summary>
         internal static string CodeFixTitle {
             get {

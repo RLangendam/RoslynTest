@@ -52,20 +52,10 @@ namespace Analyzer1
 
         private async Task<Solution> MakeUppercaseAsync(Document document, MethodDeclarationSyntax typeDecl, CancellationToken cancellationToken)
         {
-            // Compute new uppercase name.
-            var identifierToken = typeDecl.Identifier;
-            //var newName = identifierToken.Text.ToUpperInvariant();
-            var newName = "Mapped";
-
-            // Get the symbol representing the type to be renamed.
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-            var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
 
-            // Produce a new solution that has all references to that type renamed, including the declaration.
             var originalSolution = document.Project.Solution;
             var optionSet = originalSolution.Workspace.Options;
-
-            //var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, typeSymbol, newName, optionSet, cancellationToken).ConfigureAwait(false);
 
             var writer = new MyWriter();
             var newNode = writer.Visit(typeDecl);
