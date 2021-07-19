@@ -11,16 +11,15 @@ namespace Analyzer1.Test
     {
         //No diagnostics expected to show up
         [TestMethod]
-        public async Task TestMethod1()
+        public async Task NoDiagnosticsWithoutCode()
         {
             var test = @"";
 
             await VerifyCS.VerifyAnalyzerAsync(test);
         }
 
-        //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public async Task TestMethod2()
+        public async Task MappingFields()
         {
             var test =
 @"using System;
@@ -49,7 +48,7 @@ namespace ConsoleApplication1
             throw new NotImplementedException();
         }
 
-        public static MyModel Poep(MyDTO dto)
+        public static MyModel Poep(MyDTO left, MyDTO right)
         {
             throw new NotImplementedException();
         }
@@ -80,10 +79,9 @@ namespace ConsoleApplication1
     {
         public static MyModel Map(MyDTO dto)
         {
-            // Found
-            return new MyModel();
+            return new MyModel { Name = dto.Name };
         }
-        public static MyModel Poep(MyDTO dto)
+        public static MyModel Poep(MyDTO left, MyDTO right)
         {
             throw new NotImplementedException();
         }

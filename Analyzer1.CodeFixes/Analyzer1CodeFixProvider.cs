@@ -50,18 +50,23 @@ namespace Analyzer1
                 diagnostic);
         }
 
-        private async Task<Solution> MakeUppercaseAsync(Document document, MethodDeclarationSyntax typeDecl, CancellationToken cancellationToken)
+        private async Task<Solution> MakeUppercaseAsync(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+
+            var declaredMethodSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration);
+
+            var target = declaredMethodSymbol.ReturnType;
+            var source = declaredMethodSymbol.Parameters.Single();
 
             var originalSolution = document.Project.Solution;
             var optionSet = originalSolution.Workspace.Options;
 
-            var writer = new MyWriter();
-            var newNode = writer.Visit(typeDecl);
+            var writer = new MyWriter(originalSolution, source, target);
+            var newNode = writer.Visit(methodDeclaration);
 
             var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(typeDecl, newNode);
+            var newRoot = root.ReplaceNode(methodDeclaration, newNode);
             newRoot = Formatter.Format(newRoot, originalSolution.Workspace, optionSet);
             var newDocument = document.WithSyntaxRoot(newRoot);
             var newSolution = newDocument.Project.Solution;
