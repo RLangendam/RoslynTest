@@ -33,12 +33,12 @@ namespace ConsoleApplication1
 {
     public class MyDTO
     {
-        public string Name;
+        public string Name { get; set; }
     }
 
     public class MyModel
     {
-        public string Name;
+        public string Name { get; set; }
     }
 
     public static class Mapper
@@ -67,12 +67,12 @@ namespace ConsoleApplication1
 {
     public class MyDTO
     {
-        public string Name;
+        public string Name { get; set; }
     }
 
     public class MyModel
     {
-        public string Name;
+        public string Name { get; set; }
     }
 
     public static class Mapper

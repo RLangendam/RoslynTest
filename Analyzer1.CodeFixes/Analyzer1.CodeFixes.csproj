@@ -7,7 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TypedConstantExtension.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="NewFile1.txt" />
+    <None Remove="TypedConstantExtension" />
   </ItemGroup>
 
   <ItemGroup>

@@ -62,7 +62,7 @@ namespace Analyzer1
             var originalSolution = document.Project.Solution;
             var optionSet = originalSolution.Workspace.Options;
 
-            var writer = new MyWriter(originalSolution, source, target);
+            var writer = new MyWriter(originalSolution, source, target, semanticModel);
             var newNode = writer.Visit(methodDeclaration);
 
             var root = await document.GetSyntaxRootAsync();
