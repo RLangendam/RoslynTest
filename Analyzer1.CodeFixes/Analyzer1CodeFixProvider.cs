@@ -41,35 +41,37 @@ namespace Analyzer1
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: CodeFixResources.CodeFixTitle,
-                    createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
+                    createChangedSolution: c => MapMethodDeclaration(context.Document, declaration, c),
                     equivalenceKey: nameof(CodeFixResources.CodeFixTitle)),
                 diagnostic);
         }
 
-        private async Task<Solution> MakeUppercaseAsync(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
+        private static async Task<Solution> MapMethodDeclaration(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-
             var declaredMethodSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration);
 
             var target = declaredMethodSymbol.ReturnType;
             var source = declaredMethodSymbol.Parameters.Single();
 
+            ISyntaxWalkerFactory walkerFactory = new SyntaxWalkerFactory(semanticModel);
+            ISyntaxRewriter writer = new MySyntaxRewriter(source, target, walkerFactory);
+
+            var updatedMethodDeclaration = writer.Visit(methodDeclaration);
+
+            return await GetUpdatedSolutionAsync(document, methodDeclaration, updatedMethodDeclaration, cancellationToken);
+        }
+
+        private static async Task<Solution> GetUpdatedSolutionAsync(Document document, MethodDeclarationSyntax methodDeclaration, SyntaxNode node, CancellationToken cancellationToken)
+        {
             var originalSolution = document.Project.Solution;
             var optionSet = originalSolution.Workspace.Options;
 
-            ISyntaxWalkerFactory walkerFactory = new SyntaxWalkerFactory(semanticModel);
-
-            ISyntaxRewriter writer = new MySyntaxRewriter(source, target, walkerFactory);
-            var newNode = writer.Visit(methodDeclaration);
-
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(methodDeclaration, newNode);
-            newRoot = Formatter.Format(newRoot, originalSolution.Workspace, optionSet);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            var newSolution = newDocument.Project.Solution;
-
-            return newSolution;
+            var root = await document.GetSyntaxRootAsync(cancellationToken);
+            var replacedNodeRoot = root.ReplaceNode(methodDeclaration, node);
+            var rewrittenRoot = Formatter.Format(replacedNodeRoot, originalSolution.Workspace, optionSet);
+            var newDocument = document.WithSyntaxRoot(rewrittenRoot);
+            return newDocument.Project.Solution;
         }
     }
 }

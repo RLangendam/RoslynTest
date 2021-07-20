@@ -26,7 +26,7 @@ namespace Analyzer1
             this.walkerFactory = walkerFactory;
         }
 
-        public override SyntaxNode Visit(SyntaxNode node)
+        SyntaxNode ISyntaxRewriter.Visit(SyntaxNode node)
         {
             return base.Visit(node);
         }
@@ -34,7 +34,7 @@ namespace Analyzer1
 
         private static string GetMappingExpression(List<(IPropertySymbol symbol, Optional<MyWalker> walker)> sourcePropertySymbols, 
                                                    List<(IPropertySymbol symbol, Optional<MyWalker> walker)> targetPropertySymbols, 
-                                                   string sourceParameterName)
+                                                   string sourcePropertyStem)
         {
             var association = sourcePropertySymbols.ToDictionary(p => p.symbol.Name);
 
@@ -45,30 +45,22 @@ namespace Analyzer1
                     return $@"{pair.symbol.Name} = new {pair.symbol.Type}{{ {
                         GetMappingExpression(association[pair.symbol.Name].walker.Value.GetPropertySymbols(), 
                                              pair.walker.Value.GetPropertySymbols(),
-                                             $"{sourceParameterName}.{pair.symbol.Name}")
+                                             $"{sourcePropertyStem}.{pair.symbol.Name}")
                         } }}";
                 }
                 else
                 {
-                    return $"{pair.symbol.Name} = {sourceParameterName}.{association[pair.symbol.Name].symbol.Name}";
+                    return $"{pair.symbol.Name} = {sourcePropertyStem}.{association[pair.symbol.Name].symbol.Name}";
                 }
             }));
         }
 
-        private static Node FindNode(ITypeSymbol symbol) => new Node { syntax = symbol.DeclaringSyntaxReferences.First().GetSyntax(), symbol = symbol };
-
-
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-            var association = target.GetMembers().OfType<IFieldSymbol>().ToDictionary(m => m.Name);
+            Node FindNode(ITypeSymbol symbol) => new Node { syntax = symbol.DeclaringSyntaxReferences.First().GetSyntax(), symbol = symbol };
 
-            var sourceWalker = walkerFactory.Create();
-            var targetWalker = walkerFactory.Create();
-            sourceWalker.Visit(FindNode(sourceParameter.Type).syntax);
-            targetWalker.Visit(FindNode(target).syntax);
-
-            var assignments = string.Join(",", sourceParameter.Type.GetMembers().OfType<IFieldSymbol>()
-                .Select(member => $"{association[member.Name].Name} = {sourceParameter.Name}.{member.Name}"));
+            var sourceWalker = walkerFactory.CreateAndWalk(FindNode(sourceParameter.Type).syntax);
+            var targetWalker = walkerFactory.CreateAndWalk(FindNode(target).syntax);
             var returnStatement = $@"{{
     return new {target.Name}{{{
                 GetMappingExpression(sourceWalker.GetPropertySymbols(), targetWalker.GetPropertySymbols(), sourceParameter.Name)

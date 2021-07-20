@@ -5,7 +5,7 @@ namespace Analyzer1
 {
     public interface ISyntaxWalkerFactory
     {
-        SyntaxWalker Create();
+        SyntaxWalker CreateAndWalk(SyntaxNode syntax);
     }
 
     public class SyntaxWalkerFactory : ISyntaxWalkerFactory
@@ -17,9 +17,11 @@ namespace Analyzer1
             this.semanticModel = semanticModel;
         }
 
-        public SyntaxWalker Create()
+        public SyntaxWalker CreateAndWalk(SyntaxNode syntax)
         {
-            return new MyWalker(semanticModel);
+            var walker = new MyWalker(semanticModel);
+            walker.Visit(syntax);
+            return walker;
         }
     }
 }
