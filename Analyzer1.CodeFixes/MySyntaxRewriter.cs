@@ -32,25 +32,33 @@ namespace Analyzer1
         }
 
 
-        private static string GetMappingExpression(List<(IPropertySymbol symbol, Optional<MyWalker> walker)> sourcePropertySymbols, 
-                                                   List<(IPropertySymbol symbol, Optional<MyWalker> walker)> targetPropertySymbols, 
+        private static string GetMappingExpression(List<(IPropertySymbol symbol, Optional<MyWalker> walker)> sourcePropertySymbols,
+                                                   List<(IPropertySymbol symbol, Optional<MyWalker> walker)> targetPropertySymbols,
                                                    string sourcePropertyStem)
         {
             var association = sourcePropertySymbols.ToDictionary(p => p.symbol.Name);
 
-            return string.Join(", ", targetPropertySymbols.Select(pair =>
+            return string.Join($",{Environment.NewLine}", targetPropertySymbols.Select(pair =>
             {
-                if (pair.walker.HasValue)
+                if (association.TryGetValue(pair.symbol.Name, out var sourcePair))
                 {
-                    return $@"{pair.symbol.Name} = new {pair.symbol.Type}{{ {
-                        GetMappingExpression(association[pair.symbol.Name].walker.Value.GetPropertySymbols(), 
-                                             pair.walker.Value.GetPropertySymbols(),
-                                             $"{sourcePropertyStem}.{pair.symbol.Name}")
-                        } }}";
+                    if (pair.walker.HasValue)
+                    {
+                        return $"{pair.symbol.Name} = new {pair.symbol.Type}{{{Environment.NewLine}" +
+                            GetMappingExpression(sourcePair.walker.Value.GetPropertySymbols(),
+                                                 pair.walker.Value.GetPropertySymbols(),
+                                                 $"{sourcePropertyStem}.{pair.symbol.Name}") +
+                            $"{Environment.NewLine}}}";                         
+                    }
+                    else
+                    {
+                        return $"{pair.symbol.Name} = {sourcePropertyStem}.{sourcePair.symbol.Name}";
+                    }
                 }
                 else
                 {
-                    return $"{pair.symbol.Name} = {sourcePropertyStem}.{association[pair.symbol.Name].symbol.Name}";
+                    return $"// {pair.symbol.Name} = ...,{Environment.NewLine}";
+                    //return "";
                 }
             }));
         }
@@ -61,11 +69,9 @@ namespace Analyzer1
 
             var sourceWalker = walkerFactory.CreateAndWalk(FindNode(sourceParameter.Type).syntax);
             var targetWalker = walkerFactory.CreateAndWalk(FindNode(target).syntax);
-            var returnStatement = $@"{{
-    return new {target.Name}{{{
-                GetMappingExpression(sourceWalker.GetPropertySymbols(), targetWalker.GetPropertySymbols(), sourceParameter.Name)
-                }}};
-}}";
+            var returnStatement = $"{{{Environment.NewLine} return new {target.Name}{{" +
+                GetMappingExpression(sourceWalker.GetPropertySymbols(), targetWalker.GetPropertySymbols(), sourceParameter.Name) +
+                $"}};{Environment.NewLine}}}";
             var statement = (BlockSyntax)SyntaxFactory.ParseStatement(returnStatement);
             return node.WithBody(statement);
         }
