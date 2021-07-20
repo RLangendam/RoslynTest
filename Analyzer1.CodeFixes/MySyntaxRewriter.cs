@@ -1,16 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.FindSymbols;
-using Microsoft.CodeAnalysis.Formatting;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Analyzer1
 {
-    internal class MyWriter : CSharpSyntaxRewriter
+    internal class MySyntaxRewriter : CSharpSyntaxRewriter, ISyntaxRewriter
     {
         private class Node
         {
@@ -18,28 +14,31 @@ namespace Analyzer1
             public ITypeSymbol symbol;
         }
 
-        private readonly Solution originalSolution;
         private readonly IParameterSymbol sourceParameter;
         private readonly ITypeSymbol target;
-        private readonly Func<MyWalker> walkerFactory;
+        private readonly ISyntaxWalkerFactory walkerFactory;
 
-        public MyWriter(Solution originalSolution, IParameterSymbol sourceParameter, ITypeSymbol target, SemanticModel semanticModel)
+        public MySyntaxRewriter(IParameterSymbol sourceParameter, ITypeSymbol target, ISyntaxWalkerFactory walkerFactory)
         {
-            this.originalSolution = originalSolution;
             this.sourceParameter = sourceParameter;
             this.target = target;
-            walkerFactory = () => new MyWalker(semanticModel);
+            this.walkerFactory = walkerFactory;
+        }
+
+        public override SyntaxNode Visit(SyntaxNode node)
+        {
+            return base.Visit(node);
         }
 
 
-        private static string GetMappingExpression(Func<MyWalker> walkerFactory, Node source, Node target, string sourceParameterName)
+        private static string GetMappingExpression(ISyntaxWalkerFactory walkerFactory, Node source, Node target, string sourceParameterName)
         {
-            var sourceWalker = walkerFactory();
+            var sourceWalker = walkerFactory.Create();
             sourceWalker.Visit(source.syntax);
-            var association = sourceWalker.PropertySymbols.ToDictionary(p => p.symbol.Name);
-            var targetWalker = walkerFactory();
+            var association = sourceWalker.GetPropertySymbols().ToDictionary(p => p.symbol.Name);
+            var targetWalker = walkerFactory.Create();
             targetWalker.Visit(target.syntax);
-            return string.Join(", ", targetWalker.PropertySymbols.Select(pair =>
+            return string.Join(", ", targetWalker.GetPropertySymbols().Select(pair =>
             {
                 if (pair.walker.HasValue)
                 {

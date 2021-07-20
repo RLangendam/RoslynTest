@@ -9,6 +9,7 @@ namespace Analyzer1.Test
     [TestClass]
     public class Analyzer1UnitTest
     {
+
         //No diagnostics expected to show up
         [TestMethod]
         public async Task NoDiagnosticsWithoutCode()

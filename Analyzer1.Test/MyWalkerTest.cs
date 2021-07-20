@@ -38,7 +38,7 @@ class D
             var walker = new MyWalker(compilation.GetSemanticModel(tree));
             walker.Visit(cClass);
 
-            Assert.AreEqual(3, walker.PropertySymbols.Count);
+            Assert.AreEqual(3, walker.GetPropertySymbols().Count);
         }
     }
 }

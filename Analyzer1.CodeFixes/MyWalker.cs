@@ -1,19 +1,22 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.FindSymbols;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Analyzer1
 {
-    public class MyWalker : CSharpSyntaxWalker
+
+    public class MyWalker : SyntaxWalker
     {
         private readonly SemanticModel semanticModel;
+        private readonly List<(IPropertySymbol symbol, Optional<MyWalker> walker)> propertySymbols = new List<(IPropertySymbol, Optional<MyWalker>)>();
 
-
-        public List<(IPropertySymbol symbol, Optional<MyWalker> walker)> PropertySymbols { get; } = new List<(IPropertySymbol, Optional<MyWalker>)>();
+        public override List<(IPropertySymbol symbol, Optional<MyWalker> walker)> GetPropertySymbols()
+        {
+            return propertySymbols;
+        }
 
         public MyWalker(SemanticModel semanticModel) : base(SyntaxWalkerDepth.Token)
         {
@@ -22,7 +25,7 @@ namespace Analyzer1
 
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            PropertySymbols.Add(GetWalkedProperty(semanticModel.GetDeclaredSymbol(node)));
+            GetPropertySymbols().Add(GetWalkedProperty(semanticModel.GetDeclaredSymbol(node)));
             base.VisitPropertyDeclaration(node);
         }
 

@@ -4,10 +4,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.Rename;
-using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -62,7 +58,9 @@ namespace Analyzer1
             var originalSolution = document.Project.Solution;
             var optionSet = originalSolution.Workspace.Options;
 
-            var writer = new MyWriter(originalSolution, source, target, semanticModel);
+            ISyntaxWalkerFactory walkerFactory = new SyntaxWalkerFactory(semanticModel);
+
+            ISyntaxRewriter writer = new MySyntaxRewriter(source, target, walkerFactory);
             var newNode = writer.Visit(methodDeclaration);
 
             var root = await document.GetSyntaxRootAsync();
