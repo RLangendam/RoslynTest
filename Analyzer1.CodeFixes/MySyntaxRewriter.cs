@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Analyzer1
@@ -31,21 +32,20 @@ namespace Analyzer1
         }
 
 
-        private static string GetMappingExpression(ISyntaxWalkerFactory walkerFactory, ITypeSymbol sourceSymbol, ITypeSymbol targetSymbol, string sourceParameterName)
+        private static string GetMappingExpression(List<(IPropertySymbol symbol, Optional<MyWalker> walker)> sourcePropertySymbols, 
+                                                   List<(IPropertySymbol symbol, Optional<MyWalker> walker)> targetPropertySymbols, 
+                                                   string sourceParameterName)
         {
-            var source = FindNode(sourceSymbol);
-            var target = FindNode(targetSymbol);
-            var sourceWalker = walkerFactory.Create();
-            sourceWalker.Visit(source.syntax);
-            var association = sourceWalker.GetPropertySymbols().ToDictionary(p => p.symbol.Name);
-            var targetWalker = walkerFactory.Create();
-            targetWalker.Visit(target.syntax);
-            return string.Join(", ", targetWalker.GetPropertySymbols().Select(pair =>
+            var association = sourcePropertySymbols.ToDictionary(p => p.symbol.Name);
+
+            return string.Join(", ", targetPropertySymbols.Select(pair =>
             {
                 if (pair.walker.HasValue)
                 {
                     return $@"{pair.symbol.Name} = new {pair.symbol.Type}{{ {
-                        GetMappingExpression(walkerFactory, association[pair.symbol.Name].symbol.Type, pair.symbol.Type, $"{sourceParameterName}.{pair.symbol.Name}")
+                        GetMappingExpression(association[pair.symbol.Name].walker.Value.GetPropertySymbols(), 
+                                             pair.walker.Value.GetPropertySymbols(),
+                                             $"{sourceParameterName}.{pair.symbol.Name}")
                         } }}";
                 }
                 else
@@ -62,10 +62,17 @@ namespace Analyzer1
         {
             var association = target.GetMembers().OfType<IFieldSymbol>().ToDictionary(m => m.Name);
 
+            var sourceWalker = walkerFactory.Create();
+            var targetWalker = walkerFactory.Create();
+            sourceWalker.Visit(FindNode(sourceParameter.Type).syntax);
+            targetWalker.Visit(FindNode(target).syntax);
+
             var assignments = string.Join(",", sourceParameter.Type.GetMembers().OfType<IFieldSymbol>()
                 .Select(member => $"{association[member.Name].Name} = {sourceParameter.Name}.{member.Name}"));
             var returnStatement = $@"{{
-    return new {target.Name}{{{GetMappingExpression(walkerFactory, sourceParameter.Type, target, sourceParameter.Name)}}};
+    return new {target.Name}{{{
+                GetMappingExpression(sourceWalker.GetPropertySymbols(), targetWalker.GetPropertySymbols(), sourceParameter.Name)
+                }}};
 }}";
             var statement = (BlockSyntax)SyntaxFactory.ParseStatement(returnStatement);
             return node.WithBody(statement);
