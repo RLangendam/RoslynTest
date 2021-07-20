@@ -93,5 +93,110 @@ namespace ConsoleApplication1
             await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
         }
 
+        [TestMethod]
+        public async Task MappingRecursive()
+        {
+            var test =
+@"using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public class MySubDTO2
+    {
+        public string Name { get; set; }
+    }
+
+    public class MySubDTO
+    {
+        public MySubDTO2 Namedd { get; set; }
+    }
+
+    public class MyDTO
+    {
+        public MySubDTO Named { get; set; }
+    }
+    
+    public class MySubModel2
+    {
+        public string Name { get; set; }
+    }
+
+    public class MySubModel
+    {
+        public MySubModel2 Namedd { get; set; }
+    }
+
+    public class MyModel
+    {
+        public MySubModel Named { get; set; }
+    }
+
+    public static class Mapper
+    {
+        public static MyModel Map(MyDTO dto)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var fixtest =
+@"using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Diagnostics;
+
+namespace ConsoleApplication1
+{
+    public class MySubDTO2
+    {
+        public string Name { get; set; }
+    }
+
+    public class MySubDTO
+    {
+        public MySubDTO2 Namedd { get; set; }
+    }
+
+    public class MyDTO
+    {
+        public MySubDTO Named { get; set; }
+    }
+
+    public class MySubModel2
+    {
+        public string Name { get; set; }
+    }
+
+    public class MySubModel
+    {
+        public MySubModel2 Namedd { get; set; }
+    }
+
+    public class MyModel
+    {
+        public MySubModel Named { get; set; }
+    }
+
+    public static class Mapper
+    {
+        public static MyModel Map(MyDTO dto)
+        {
+            return new MyModel { Named = new ConsoleApplication1.MySubModel { Namedd = new ConsoleApplication1.MySubModel2 { Name = dto.Named.Namedd.Name } } };
+        }
+    }
+}";
+
+            var expected = VerifyCS.Diagnostic("Analyzer1").WithSpan(42, 31, 42, 34).WithArguments("Map");
+            await VerifyCS.VerifyCodeFixAsync(test, expected, fixtest);
+        }
+
     }
 }

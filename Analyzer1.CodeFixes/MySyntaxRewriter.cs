@@ -31,8 +31,10 @@ namespace Analyzer1
         }
 
 
-        private static string GetMappingExpression(ISyntaxWalkerFactory walkerFactory, Node source, Node target, string sourceParameterName)
+        private static string GetMappingExpression(ISyntaxWalkerFactory walkerFactory, ITypeSymbol sourceSymbol, ITypeSymbol targetSymbol, string sourceParameterName)
         {
+            var source = FindNode(sourceSymbol);
+            var target = FindNode(targetSymbol);
             var sourceWalker = walkerFactory.Create();
             sourceWalker.Visit(source.syntax);
             var association = sourceWalker.GetPropertySymbols().ToDictionary(p => p.symbol.Name);
@@ -42,7 +44,9 @@ namespace Analyzer1
             {
                 if (pair.walker.HasValue)
                 {
-                    return ""; // "new {target.Name}";
+                    return $@"{pair.symbol.Name} = new {pair.symbol.Type}{{ {
+                        GetMappingExpression(walkerFactory, association[pair.symbol.Name].symbol.Type, pair.symbol.Type, $"{sourceParameterName}.{pair.symbol.Name}")
+                        } }}";
                 }
                 else
                 {
@@ -61,7 +65,7 @@ namespace Analyzer1
             var assignments = string.Join(",", sourceParameter.Type.GetMembers().OfType<IFieldSymbol>()
                 .Select(member => $"{association[member.Name].Name} = {sourceParameter.Name}.{member.Name}"));
             var returnStatement = $@"{{
-    return new {target.Name}{{{GetMappingExpression(walkerFactory, FindNode(sourceParameter.Type), FindNode(target), sourceParameter.Name)}}};
+    return new {target.Name}{{{GetMappingExpression(walkerFactory, sourceParameter.Type, target, sourceParameter.Name)}}};
 }}";
             var statement = (BlockSyntax)SyntaxFactory.ParseStatement(returnStatement);
             return node.WithBody(statement);
