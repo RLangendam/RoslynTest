@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -8,59 +8,62 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestFiles\MySyntaxRewriter\BasicPropertiesFix.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\BasicPropertiesStart.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\RecursivePropertiesFix.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\RecursivePropertiesStart.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix2.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart2.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesFix.cs" />
+    <Compile Remove="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesStart.cs" />
+    <Compile Remove="TestFiles\MyWalker\MyWalkerHappyFlow.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="MyWalkerTest" />
-    <None Remove="NewFile1.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\BasicPropertiesFix.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\BasicPropertiesStart.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\RecursivePropertiesFix.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\RecursivePropertiesStart.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix2.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart2.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesFix.txt" />
-    <None Remove="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesStart.txt" />
-    <None Remove="TestFiles\MyWalker\MyWalkerHappyFlow.txt" />
+    <None Remove="NewFile1.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="TestFiles\MySyntaxRewriter\RecursivePropertiesFix.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\RecursivePropertiesFix.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\MySyntaxRewriter\RecursivePropertiesStart.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\RecursivePropertiesStart.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="TestFiles\MySyntaxRewriter\BasicPropertiesFix.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\BasicPropertiesFix.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\MySyntaxRewriter\BasicPropertiesStart.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\BasicPropertiesStart.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix2.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix2.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart2.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart2.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesFix.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesFix.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesStart.txt">
+    <Content Include="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesStart.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="TestFiles\MyWalker\MyWalkerHappyFlow.txt">
+    <Content Include="TestFiles\MyWalker\MyWalkerHappyFlow.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

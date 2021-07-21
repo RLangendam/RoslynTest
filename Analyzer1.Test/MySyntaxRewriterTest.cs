@@ -14,11 +14,11 @@ namespace Analyzer1.Test
         private const string testFilesPath = @".\TestFiles\MySyntaxRewriter\";
 
         [DataTestMethod]
-        [DataRow("BasicPropertiesStart.txt", "BasicPropertiesFix.txt")]
-        [DataRow("RecursivePropertiesStart.txt", "RecursivePropertiesFix.txt")]
-        [DataRow("TargetPropertiesSubsetOfSourcePropertiesStart.txt", "TargetPropertiesSubsetOfSourcePropertiesFix.txt")]
-        [DataRow("SourcePropertiesSubsetOfTargetPropertiesStart.txt", "SourcePropertiesSubsetOfTargetPropertiesFix.txt")]
-        // todo: [DataRow("SourcePropertiesSubsetOfTargetPropertiesStart2.txt", "SourcePropertiesSubsetOfTargetPropertiesFix2.txt")]
+        [DataRow("BasicPropertiesStart.cs", "BasicPropertiesFix.cs")]
+        [DataRow("RecursivePropertiesStart.cs", "RecursivePropertiesFix.cs")]
+        [DataRow("TargetPropertiesSubsetOfSourcePropertiesStart.cs", "TargetPropertiesSubsetOfSourcePropertiesFix.cs")]
+        [DataRow("SourcePropertiesSubsetOfTargetPropertiesStart.cs", "SourcePropertiesSubsetOfTargetPropertiesFix.cs")]
+        // todo: [DataRow("SourcePropertiesSubsetOfTargetPropertiesStart2.cs", "SourcePropertiesSubsetOfTargetPropertiesFix2.cs")]
         public async Task MappingBasicPropertiesTestAsync(string startFilename, string fixFilename)
         {
             var start = GetFileAsString(startFilename);

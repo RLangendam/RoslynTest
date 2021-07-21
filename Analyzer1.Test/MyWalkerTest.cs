@@ -17,7 +17,7 @@ namespace Analyzer1.Test
         [TestMethod]
         public void SimpleObjectPropertiesFound()
         {
-            var source = GetSource("MyWalkerHappyFlow.txt");
+            var source = GetSource("MyWalkerHappyFlow.cs");
 
             var tree = CSharpSyntaxTree.ParseText(source);
             
