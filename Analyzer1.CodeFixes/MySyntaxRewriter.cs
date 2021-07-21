@@ -31,10 +31,22 @@ namespace Analyzer1
             return base.Visit(node);
         }
 
+        public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
+        {
+            Node FindNode(ITypeSymbol symbol) => new Node { syntax = symbol.DeclaringSyntaxReferences.First().GetSyntax(), symbol = symbol };
+
+            var sourceWalker = walkerFactory.CreateAndWalk(FindNode(sourceParameter.Type).syntax);
+            var targetWalker = walkerFactory.CreateAndWalk(FindNode(target).syntax);
+            var returnStatement = $"{{{Environment.NewLine} return new {target.Name}{{" +
+                GetMappingExpression(sourceWalker.GetPropertySymbols(), targetWalker.GetPropertySymbols(), sourceParameter.Name) +
+                $"}};{Environment.NewLine}}}";
+            var statement = (BlockSyntax)SyntaxFactory.ParseStatement(returnStatement);
+            return node.WithBody(statement);
+        }
 
         private static string GetMappingExpression(List<(IPropertySymbol symbol, Optional<MyWalker> walker)> sourcePropertySymbols,
-                                                   List<(IPropertySymbol symbol, Optional<MyWalker> walker)> targetPropertySymbols,
-                                                   string sourcePropertyStem)
+                                           List<(IPropertySymbol symbol, Optional<MyWalker> walker)> targetPropertySymbols,
+                                           string sourcePropertyStem)
         {
             var association = sourcePropertySymbols.ToDictionary(p => p.symbol.Name);
 
@@ -48,7 +60,7 @@ namespace Analyzer1
                             GetMappingExpression(sourcePair.walker.Value.GetPropertySymbols(),
                                                  pair.walker.Value.GetPropertySymbols(),
                                                  $"{sourcePropertyStem}.{pair.symbol.Name}") +
-                            $"{Environment.NewLine}}}";                         
+                            $"{Environment.NewLine}}}";
                     }
                     else
                     {
@@ -61,19 +73,6 @@ namespace Analyzer1
                     //return "";
                 }
             }));
-        }
-
-        public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
-        {
-            Node FindNode(ITypeSymbol symbol) => new Node { syntax = symbol.DeclaringSyntaxReferences.First().GetSyntax(), symbol = symbol };
-
-            var sourceWalker = walkerFactory.CreateAndWalk(FindNode(sourceParameter.Type).syntax);
-            var targetWalker = walkerFactory.CreateAndWalk(FindNode(target).syntax);
-            var returnStatement = $"{{{Environment.NewLine} return new {target.Name}{{" +
-                GetMappingExpression(sourceWalker.GetPropertySymbols(), targetWalker.GetPropertySymbols(), sourceParameter.Name) +
-                $"}};{Environment.NewLine}}}";
-            var statement = (BlockSyntax)SyntaxFactory.ParseStatement(returnStatement);
-            return node.WithBody(statement);
         }
     }
 }

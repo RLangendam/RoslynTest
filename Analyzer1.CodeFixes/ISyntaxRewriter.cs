@@ -2,7 +2,7 @@
 
 namespace Analyzer1
 {
-    internal interface ISyntaxRewriter
+    public interface ISyntaxRewriter
     {
         SyntaxNode Visit(SyntaxNode node);
     }

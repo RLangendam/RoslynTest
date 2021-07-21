@@ -1,10 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.Options;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -49,30 +46,15 @@ namespace Analyzer1
 
         private static async Task<Solution> MapMethodDeclaration(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-            var declaredMethodSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration);
+            var syntaxRewriterFactory = new SyntaxRewriterFactory(document, methodDeclaration, cancellationToken);
+            var syntaxNodeFormatter = new SyntaxNodeFormatter();
+            var solutionUpdater = new SolutionUpdater(syntaxNodeFormatter);
 
-            var target = declaredMethodSymbol.ReturnType;
-            var source = declaredMethodSymbol.Parameters.Single();
-
-            ISyntaxWalkerFactory walkerFactory = new SyntaxWalkerFactory(semanticModel);
-            ISyntaxRewriter writer = new MySyntaxRewriter(source, target, walkerFactory);
+            var writer = await syntaxRewriterFactory.GetMySyntaxRewriterAsync();
 
             var updatedMethodDeclaration = writer.Visit(methodDeclaration);
 
-            return await GetUpdatedSolutionAsync(document, methodDeclaration, updatedMethodDeclaration, cancellationToken);
-        }
-
-        private static async Task<Solution> GetUpdatedSolutionAsync(Document document, MethodDeclarationSyntax methodDeclaration, SyntaxNode node, CancellationToken cancellationToken)
-        {
-            var originalSolution = document.Project.Solution;
-            var optionSet = originalSolution.Workspace.Options;
-
-            var root = await document.GetSyntaxRootAsync(cancellationToken);
-            var replacedNodeRoot = root.ReplaceNode(methodDeclaration, node);
-            var rewrittenRoot = Formatter.Format(replacedNodeRoot, originalSolution.Workspace, optionSet);
-            var newDocument = document.WithSyntaxRoot(rewrittenRoot);
-            return newDocument.Project.Solution;
+            return await solutionUpdater.GetUpdatedSolutionAsync(document, methodDeclaration, updatedMethodDeclaration, cancellationToken);            
         }
     }
 }
