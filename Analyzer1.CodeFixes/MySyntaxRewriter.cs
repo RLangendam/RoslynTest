@@ -18,17 +18,19 @@ namespace Analyzer1
         private readonly IParameterSymbol sourceParameter;
         private readonly ITypeSymbol target;
         private readonly ISyntaxWalkerFactory walkerFactory;
+        private readonly SyntaxNode visitNode;
 
-        public MySyntaxRewriter(IParameterSymbol sourceParameter, ITypeSymbol target, ISyntaxWalkerFactory walkerFactory)
+        public MySyntaxRewriter(IParameterSymbol sourceParameter, ITypeSymbol target, ISyntaxWalkerFactory walkerFactory, SyntaxNode visitNode)
         {
             this.sourceParameter = sourceParameter;
             this.target = target;
             this.walkerFactory = walkerFactory;
+            this.visitNode = visitNode;
         }
 
-        SyntaxNode ISyntaxRewriter.Visit(SyntaxNode node)
+        SyntaxNode ISyntaxRewriter.Visit()
         {
-            return base.Visit(node);
+            return base.Visit(visitNode);
         }
 
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)

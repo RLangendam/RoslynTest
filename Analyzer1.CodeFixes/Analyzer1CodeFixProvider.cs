@@ -52,7 +52,7 @@ namespace Analyzer1
 
             var writer = await syntaxRewriterFactory.GetMySyntaxRewriterAsync();
 
-            var updatedMethodDeclaration = writer.Visit(methodDeclaration);
+            var updatedMethodDeclaration = writer.Visit();
 
             return await solutionUpdater.GetUpdatedSolutionAsync(document, methodDeclaration, updatedMethodDeclaration, cancellationToken);            
         }

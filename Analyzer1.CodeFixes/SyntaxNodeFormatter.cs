@@ -8,10 +8,10 @@ namespace Analyzer1
     {
         public SyntaxNode FormatNode(SyntaxNode syntaxNode, Document document, CancellationToken cancellationToken = default)
         {
-            var originalSolution = document.Project.Solution;
-            var optionSet = originalSolution.Workspace.Options;
+            var workspace = document.Project.Solution.Workspace;
+            var optionSet = workspace.Options;
 
-            return Formatter.Format(syntaxNode, originalSolution.Workspace, optionSet, cancellationToken);
+            return Formatter.Format(syntaxNode, workspace, optionSet, cancellationToken);
         }
     }
 }

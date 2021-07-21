@@ -13,7 +13,7 @@ namespace Analyzer1
         private readonly MethodDeclarationSyntax methodDeclaration;
         private readonly CancellationToken cancellationToken;
         
-        public SyntaxRewriterFactory(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
+        public SyntaxRewriterFactory(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken=default)
         {
             this.document = document;
             this.methodDeclaration = methodDeclaration;
@@ -23,7 +23,7 @@ namespace Analyzer1
         public async Task<ISyntaxRewriter> GetMySyntaxRewriterAsync()
         {
             var paramters = await GetWriterParamtersAsync();
-            return new MySyntaxRewriter(paramters.source, paramters.target, paramters.walkerFactory);
+            return new MySyntaxRewriter(paramters.source, paramters.target, paramters.walkerFactory, methodDeclaration);
         }
      
         private async Task<(IParameterSymbol source, ITypeSymbol target, ISyntaxWalkerFactory walkerFactory)> GetWriterParamtersAsync()

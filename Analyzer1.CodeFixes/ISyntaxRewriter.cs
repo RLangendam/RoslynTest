@@ -4,6 +4,6 @@ namespace Analyzer1
 {
     public interface ISyntaxRewriter
     {
-        SyntaxNode Visit(SyntaxNode node);
+        SyntaxNode Visit();
     }
 }

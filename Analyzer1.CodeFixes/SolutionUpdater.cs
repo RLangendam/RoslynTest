@@ -7,9 +7,9 @@ namespace Analyzer1
 {
     public class SolutionUpdater
     {
-        private readonly SyntaxNodeFormatter syntaxNodeFormatter;
+        private readonly SyntaxNodeFormatter syntaxNodeFormatter; 
 
-        public SolutionUpdater(SyntaxNodeFormatter syntaxNodeFormatter)
+        public SolutionUpdater(SyntaxNodeFormatter syntaxNodeFormatter) // todo: use interface for SyntaxNodeFormatter
         {
             this.syntaxNodeFormatter = syntaxNodeFormatter;
         }

@@ -12,7 +12,24 @@
     <None Remove="NewFile1.txt" />
     <None Remove="TestFiles\MySyntaxRewriter\BasicPropertiesFix.txt" />
     <None Remove="TestFiles\MySyntaxRewriter\BasicPropertiesStart.txt" />
+    <None Remove="TestFiles\MySyntaxRewriter\RecursivePropertiesFix.txt" />
+    <None Remove="TestFiles\MySyntaxRewriter\RecursivePropertiesStart.txt" />
+    <None Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix.txt" />
+    <None Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix2.txt" />
+    <None Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart.txt" />
+    <None Remove="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart2.txt" />
+    <None Remove="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesFix.txt" />
+    <None Remove="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesStart.txt" />
     <None Remove="TestFiles\MyWalker\MyWalkerHappyFlow.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestFiles\MySyntaxRewriter\RecursivePropertiesFix.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\MySyntaxRewriter\RecursivePropertiesStart.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +37,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestFiles\MySyntaxRewriter\BasicPropertiesStart.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesFix2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\MySyntaxRewriter\SourcePropertiesSubsetOfTargetPropertiesStart2.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesFix.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\MySyntaxRewriter\TargetPropertiesSubsetOfSourcePropertiesStart.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
