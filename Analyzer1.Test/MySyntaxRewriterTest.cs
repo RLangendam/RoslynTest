@@ -25,9 +25,9 @@ namespace Analyzer1.Test
             var fix = GetFileAsString(fixFilename);
 
             var document = CreateDocument(start);
-            var target = await GetTargetAsync(document);
+            var rewriter = await GetMySyntaxRewriterAsync(document);
 
-            var newNode = target.Visit();
+            var newNode = rewriter.Visit();
 
             var result = FormatNode(newNode, document);
 
@@ -46,7 +46,7 @@ namespace Analyzer1.Test
             return formatter.FormatNode(node, document).ToFullString();
         }
 
-        private async Task<ISyntaxRewriter> GetTargetAsync(Document document)
+        private async Task<ISyntaxRewriter> GetMySyntaxRewriterAsync(Document document)
         {
             var root = await document.GetSyntaxRootAsync();
             var declaration = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();

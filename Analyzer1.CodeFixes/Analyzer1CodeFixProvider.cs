@@ -46,6 +46,7 @@ namespace Analyzer1
 
         private static async Task<Solution> MapMethodDeclaration(Document document, MethodDeclarationSyntax methodDeclaration, CancellationToken cancellationToken)
         {
+            // todo: Some form of DI??
             var syntaxRewriterFactory = new SyntaxRewriterFactory(document, methodDeclaration, cancellationToken);
             var syntaxNodeFormatter = new SyntaxNodeFormatter();
             var solutionUpdater = new SolutionUpdater(syntaxNodeFormatter);
